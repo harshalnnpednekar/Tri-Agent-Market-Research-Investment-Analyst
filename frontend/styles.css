@@ -1,4 +1,159 @@
-/* styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Outfit', sans-serif;
+    background-color: #0b1121;
+    color: #e2e8f0;
+    overflow-x: hidden;
+}
+
+/* Institutional Motion & Entry Sequences */
+.animate-entry {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: slideUpFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+
+@keyframes slideUpFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Typing / Staggered Text Animation */
+.stagger-line {
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: slideRightFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideRightFadeIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Glassmorphism */
+.glass-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-input-container {
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(12px);
+    border: 1px solid transparent;
+    background-image: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)), linear-gradient(to right, #06b6d4, #d946ef);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+/* Premium Button */
+.btn-premium {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+}
+.btn-premium:hover {
+    transform: scale(1.03);
+    box-shadow: inset 0 0 20px rgba(255,255,255,0.15), 0 8px 25px rgba(99,102,241,0.5);
+}
+.btn-premium:active {
+    transform: scale(0.97);
+}
+
+/* Skeleton Loading Shimmer */
+.skeleton {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 6px;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Tooltips */
+.tooltip-text {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    transform: translateY(5px);
+    pointer-events: none;
+}
+.has-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Speedometer Gauge Visualizer */
+.gauge-container {
+    position: relative;
+    width: 140px;
+    height: 70px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+.gauge-arc {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 12px solid #1e293b;
+    border-top-color: #34d399;   /* Green top */
+    border-right-color: #fbbf24; /* Amber right */
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    transform: rotate(-45deg);
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.gauge-needle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    height: 60px;
+    background: #f8fafc;
+    transform-origin: bottom center;
+    transform: rotate(-90deg); /* Range: -90deg to +90deg */
+    transition: transform 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(255,255,255,0.4);
+    z-index: 2;
+}
+.gauge-center {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 3px solid #f8fafc;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+/* Fade Crossfade */
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+    pointer-events: none;
+}
+.fade-in {
+    opacity: 1;
+    transition: opacity 0.5s ease-in;
 }
