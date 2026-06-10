@@ -3,6 +3,7 @@ import yfinance as yf
 import requests
 from bs4 import BeautifulSoup
 import asyncio
+import urllib.parse
 
 async def fetch_stock_data(ticker: str) -> dict:
     """Fetches a stock's ticker price, P/E ratio, and Beta using yfinance."""
@@ -77,7 +78,8 @@ async def scrape_market_news(query: str) -> dict:
     loop = asyncio.get_event_loop()
     def _fetch():
         # Yahoo Finance news search
-        url = f"https://finance.yahoo.com/quote/{query}/news"
+        safe_query = urllib.parse.quote(query)
+        url = f"https://finance.yahoo.com/quote/{safe_query}/news"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }

@@ -41,6 +41,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return typeof value === 'number' ? value.toFixed(decimals) : value;
     }
 
+    function escapeHTML(str) {
+        if (typeof str !== 'string') return String(str);
+        return str.replace(/[&<>'"]/g, 
+            tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag])
+        );
+    }
+
     function renderSkeletons() {
         skeletonContainer.innerHTML = `
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full">
@@ -105,18 +118,18 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Equity parsing
         const stockData = raw.stock_data || {};
-        const ticker = stockData.ticker || stockTicker.toUpperCase();
-        const price = stockData.error ? 'Error' : formatCurrency(stockData.current_price);
-        const pe = stockData.error ? '--' : formatNumber(stockData.pe_ratio);
-        const beta = stockData.error ? '--' : formatNumber(stockData.beta);
+        const ticker = escapeHTML(stockData.ticker || stockTicker.toUpperCase());
+        const price = escapeHTML(stockData.error ? 'Error' : formatCurrency(stockData.current_price));
+        const pe = escapeHTML(stockData.error ? '--' : formatNumber(stockData.pe_ratio));
+        const beta = escapeHTML(stockData.error ? '--' : formatNumber(stockData.beta));
         const betaVal = stockData.error || isNaN(stockData.beta) ? 1 : stockData.beta;
         const betaAngle = Math.min(Math.max((betaVal - 1) * 90, -90), 90);
         
         // MF parsing
         const mfData = raw.mutual_fund_data || {};
-        const mfName = mfData.error ? mfQuery : (mfData.fund_name || mfQuery);
-        const nav = mfData.error ? 'Error' : formatCurrency(mfData.latest_nav);
-        const cat = mfData.error ? '--' : (mfData.scheme_category || 'N/A');
+        const mfName = escapeHTML(mfData.error ? mfQuery : (mfData.fund_name || mfQuery));
+        const nav = escapeHTML(mfData.error ? 'Error' : formatCurrency(mfData.latest_nav));
+        const cat = escapeHTML(mfData.error ? '--' : (mfData.scheme_category || 'N/A'));
         
         let mockExpense = mfData.error ? 0 : (((mfData.fund_name || "").length % 15) * 0.1 + 0.5);
         const expPct = Math.min((mockExpense / 2.5) * 100, 100);
@@ -128,19 +141,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const headlines = (raw.news_data || {}).headlines || [];
         let newsHtml = headlines.length === 0 ? '<li class="italic text-slate-500">No significant news detected.</li>' : '';
         headlines.forEach((hl, i) => {
-            newsHtml += `<li class="flex items-start text-slate-300 stagger-line" style="animation-delay: ${i*100}ms"><span class="text-indigo-400 mr-3 mt-0.5">›</span> <span>${hl}</span></li>`;
+            newsHtml += `<li class="flex items-start text-slate-300 stagger-line" style="animation-delay: ${i*100}ms"><span class="text-indigo-400 mr-3 mt-0.5">›</span> <span>${escapeHTML(hl)}</span></li>`;
         });
 
-        // Pros vs Cons
         const points = bear.analysis_points || [];
         let prosHtml = '';
         let consHtml = '';
         points.forEach((pt, i) => {
             let safePt = pt.replace(/Bearish/gi, "Negative").replace(/Bear/gi, "Risk").replace(/Fund Risk/gi, "Market Exposure Risk");
+            let escapedPt = escapeHTML(safePt);
             if (safePt.includes("Risk") || safePt.includes("Error") || safePt.includes("Negative") || safePt.includes("High")) {
-                consHtml += `<li class="flex items-start stagger-line text-slate-300 leading-relaxed" style="animation-delay: ${(i*100)+400}ms"><span class="text-amber-500 mr-2 mt-0.5">⚠</span> <span>${safePt}</span></li>`;
+                consHtml += `<li class="flex items-start stagger-line text-slate-300 leading-relaxed" style="animation-delay: ${(i*100)+400}ms"><span class="text-amber-500 mr-2 mt-0.5">⚠</span> <span>${escapedPt}</span></li>`;
             } else {
-                prosHtml += `<li class="flex items-start stagger-line text-slate-300 leading-relaxed" style="animation-delay: ${(i*100)+400}ms"><span class="text-emerald-500 mr-2 mt-0.5">✓</span> <span>${safePt}</span></li>`;
+                prosHtml += `<li class="flex items-start stagger-line text-slate-300 leading-relaxed" style="animation-delay: ${(i*100)+400}ms"><span class="text-emerald-500 mr-2 mt-0.5">✓</span> <span>${escapedPt}</span></li>`;
             }
         });
         if(!prosHtml) prosHtml = '<li class="italic text-slate-500 text-xs">No specific strengths identified.</li>';
@@ -148,9 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Allocation parsing
         const alloc = synthesis.Allocation_Breakdown || {};
-        const stockPctStr = alloc["Recommended Stock Allocation"] || "0%";
-        const mfPctStr = alloc["Recommended Mutual Fund Allocation"] || "0%";
-        const cashPctStr = alloc["Cash/Safe Haven"] || "0%";
+        const stockPctStr = escapeHTML(alloc["Recommended Stock Allocation"] || "0%");
+        const mfPctStr = escapeHTML(alloc["Recommended Mutual Fund Allocation"] || "0%");
+        const cashPctStr = escapeHTML(alloc["Cash/Safe Haven"] || "0%");
 
         dataContainer.innerHTML = `
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full pb-10">
